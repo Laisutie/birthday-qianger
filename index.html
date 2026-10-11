@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  致懿千儿｜张笑涵 · 生日快乐
+  单文件 HTML · Tailwind CSS + 原生 JavaScript
+  ============================================================
+
+  【部署方式一 · Vercel（推荐）】
+  1. 打开 https://vercel.com ，用 GitHub 账号登录（没有就先注册）。
+  2. 把本文件夹推到一个 GitHub 仓库（index.html 必须在仓库根目录）。
+  3. Vercel 首页点 Add New → Project → 选择该仓库 → Framework Preset 选 Other
+     （无需构建命令）→ 点击 Deploy。
+  4. 完成后得到 https://xxx.vercel.app 链接，可直接发给朋友。
+  5. 之后每次 push 更新，Vercel 自动重新部署。
+  也可用命令行：npm i -g vercel，然后在项目文件夹执行 vercel 按提示部署。
+
+  【部署方式二 · GitHub Pages】
+  1. 新建 GitHub 仓库（如 birthday-qianger），把本文件夹内容推入，保证
+     index.html 在根目录。
+  2. 仓库 Settings → Pages → Source 选 "Deploy from a branch" →
+     分支选 main、目录选 / (root) → Save。
+  3. 等约 1 分钟，访问 https://<用户名>.github.io/<仓库名>/ 即可。
+  4. 更新内容：git add . && git commit -m "update" && git push，Pages 自动更新。
+
+  【音乐替换指引】
+  默认音乐为内置 Web Audio 合成版《生日快乐》八音盒旋律（零外部资源、离线可用）。
+  想换成真正的《生日快乐》MP3：
+  1. 将 mp3 命名为 birthday.mp3，放进本文件夹下的 assets/ 目录；
+  2. 在下方 <script> 顶部找到 MUSIC_SRC，把 "" 改为 "assets/birthday.mp3"；
+  3. 刷新即可；若文件缺失会自动回退到内置合成旋律。
+  ============================================================
+-->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#150a2b">
+<title>致懿千儿｜张笑涵，生日快乐✨</title>
+
+<!-- 内联 SVG favicon（星光） -->
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="%23f6a9c9"/><stop offset="1" stop-color="%23e9c6ff"/></linearGradient></defs><circle cx="24" cy="24" r="23" fill="url(%23g)"/><path d="M24 6 C26 18 30 22 42 24 C30 26 26 30 24 42 C22 30 18 26 6 24 C18 22 22 18 24 6 Z" fill="%23fff" opacity="0.92"/></svg>'>
+
+<!-- Tailwind CSS（jsDelivr CDN，海外可达） -->
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+<!-- 字体：Noto Serif SC（中文衬线）+ Great Vibes（西文手写点缀），自托管镜像，海外可访问 -->
+<link rel="preconnect" href="https://miaoda.feishu.cn" crossorigin>
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Serif+SC:wght@400;500;600;700;900&family=Great+Vibes&display=swap">
+
+<style>
+/* ============================================================
+   设计令牌：粉金淡紫 · 华丽温柔
+   ============================================================ */
+:root{
+  --ink:        #fdf4ff;
+  --ink-dim:    rgba(253,244,255,.74);
+  --ink-faint:  rgba(253,244,255,.46);
+  --pink:       #f6a9c9;
+  --gold:       #f0cb8d;
+  --lilac:      #c3aeec;
+  --cream:      #fff3e2;
+  --glass:      rgba(255,255,255,.055);
+  --glass-brd:  rgba(255,255,255,.15);
+  --night-top:  21,10,43;    /* 深紫夜 */
+  --night-mid:  58,28,68;    /* 玫瑰紫 */
+  --night-bot:  33,19,66;    /* 淡紫夜 */
+  --ease: cubic-bezier(.22,1,.36,1);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:#150a2b;
+  color:var(--ink);
+  font-family:"Noto Serif SC","Songti SC","STSong",serif;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+::selection{background:rgba(246,169,201,.38);color:#fff}
+:focus-visible{outline:2px solid var(--pink);outline-offset:3px;border-radius:8px}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,textarea{font-family:inherit;font-size:1rem}
+
+/* ===== 背景渐变层（随滚动由 JS 缓慢变色） ===== */
+#bg{position:fixed;inset:0;z-index:0;overflow:hidden;background:linear-gradient(180deg,
+  rgb(var(--bgTop)),rgb(var(--bgMid)) 52%,rgb(var(--bgBot)))}
+#bg::before,#bg::after{content:"";position:absolute;width:64vmax;height:64vmax;border-radius:50%;
+  filter:blur(70px);opacity:.52;will-change:transform}
+#bg::before{left:-20vmax;top:-16vmax;background:radial-gradient(circle,rgba(246,169,201,.32),transparent 62%)}
+#bg::after{right:-18vmax;bottom:-14vmax;background:radial-gradient(circle,rgba(195,174,236,.30),transparent 62%)}
+#bgGold{position:absolute;width:58vmax;height:58vmax;left:26vmax;top:34vmax;border-radius:50%;
+  filter:blur(80px);opacity:.34;background:radial-gradient(circle,rgba(240,203,141,.34),transparent 60%);
+  will-change:transform}
+
+/* ===== 粒子画布 ===== */
+#starCanvas{position:fixed;inset:0;z-index:1;pointer-events:none}
+#fxCanvas{position:fixed;inset:0;z-index:55;pointer-events:none}
+
+/* ===== 毛玻璃卡片 ===== */
+.glass{
+  background:var(--glass);
+  border:1px solid var(--glass-brd);
+  backdrop-filter:blur(16px) saturate(140%);
+  -webkit-backdrop-filter:blur(16px) saturate(140%);
+  border-radius:28px;
+  box-shadow:0 12px 44px rgba(6,2,18,.34), inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+/* ===== 柔光文字 ===== */
+.glow-soft{text-shadow:0 0 16px rgba(246,169,201,.45),0 0 44px rgba(240,203,141,.22)}
+.gold{color:var(--gold)}
+.script{font-family:"Great Vibes","Brush Script MT",cursive;font-weight:400}
+
+/* ===== 主标题：渐变 + 呼吸流光 ===== */
+.title-glow{
+  font-weight:900;
+  background:linear-gradient(115deg,#ffd9ec 0%,#f6c58f 34%,#e9c6ff 68%,#ffd9ec 100%);
+  background-size:220% auto;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 16px rgba(246,169,201,.42)) drop-shadow(0 3px 30px rgba(240,203,141,.20));
+  animation:shine 8s linear infinite;
+  letter-spacing:.04em;
+}
+@keyframes shine{to{background-position:220% center}}
+
+/* ===== 密码锁 ===== */
+#lockScreen{
+  position:fixed;inset:0;z-index:100;
+  display:flex;align-items:center;justify-content:center;padding:1.25rem;
+  background:radial-gradient(130% 95% at 50% 8%,#2b1744 0%,#150a2b 56%,#0c0618 100%);
+  transition:opacity .9s ease,visibility .9s;
+}
+#lockScreen.gone{opacity:0;visibility:hidden;pointer-events:none}
+.lock-card{width:100%;max-width:382px;padding:2.4rem 1.9rem;text-align:center}
+.lock-input{
+  width:100%;margin-top:.4rem;padding:.85rem 1rem;text-align:center;letter-spacing:.6em;
+  color:var(--ink);background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.2);border-radius:16px;
+  transition:border-color .3s,box-shadow .3s;
+}
+.lock-input::placeholder{letter-spacing:.12em;color:var(--ink-faint)}
+.lock-input:focus{outline:none;border-color:rgba(246,169,201,.75);box-shadow:0 0 0 4px rgba(246,169,201,.14),0 0 24px rgba(246,169,201,.2)}
+.lock-err{min-height:1.4em;margin-top:.7rem;font-size:.86rem;color:#ffd3e4;opacity:0;transition:opacity .3s}
+.lock-err.show{opacity:1}
+.shake{animation:shake .5s var(--ease)}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-9px)}45%{transform:translateX(8px)}70%{transform:translateX(-5px)}90%{transform:translateX(3px)}}
+
+/* ===== 通用按钮 ===== */
+.btn-main{
+  display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
+  padding:.8rem 2.1rem;border-radius:9999px;
+  background:linear-gradient(120deg,var(--pink),var(--gold) 55%,var(--lilac));
+  color:#3a1230;font-weight:700;letter-spacing:.14em;
+  box-shadow:0 6px 26px rgba(246,169,201,.35),0 2px 10px rgba(240,203,141,.28);
+  transition:transform .35s var(--ease),box-shadow .35s;
+}
+.btn-main:hover{transform:translateY(-2px);box-shadow:0 10px 34px rgba(246,169,201,.45),0 4px 16px rgba(240,203,141,.35)}
+.btn-main:active{transform:translateY(0)}
+
+/* ===== 主内容层级 ===== */
+#main{position:relative;z-index:10;opacity:0;transition:opacity 1.1s ease}
+body.unlocked #main{opacity:1}
+/* 点击许愿按钮之前，正文内容隐藏 */
+#content{opacity:0;pointer-events:none;transition:opacity 1.3s ease .5s}
+body.started #content{opacity:1;pointer-events:auto}
+
+/* ===== Hero：黑屏 + 发光许愿按钮 ===== */
+#hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:2.2rem 1.25rem;position:relative}
+.hero-pre{transition:opacity .8s ease,transform .8s var(--ease)}
+body.started .hero-pre{opacity:0;transform:scale(.86);pointer-events:none}
+.hero-title{opacity:0;transform:translateY(22px);transition:opacity 1.1s ease .45s,transform 1.1s var(--ease) .45s}
+body.started .hero-title{opacity:1;transform:none}
+
+.btn-wish{
+  position:relative;width:176px;height:176px;border-radius:9999px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.35rem;
+  background:radial-gradient(circle at 36% 30%,rgba(255,255,255,.38),rgba(246,169,201,.17) 42%,rgba(195,174,236,.11) 70%,transparent 76%);
+  border:1px solid rgba(255,255,255,.38);
+  box-shadow:0 0 34px rgba(246,169,201,.38),0 0 90px rgba(240,203,141,.2),inset 0 0 28px rgba(255,255,255,.13);
+  animation:breathe 4.6s ease-in-out infinite;
+  transition:transform .35s var(--ease);
+}
+.btn-wish:hover{transform:scale(1.04)}
+.btn-wish::before,.btn-wish::after{content:"";position:absolute;inset:0;border-radius:9999px;
+  border:1px solid rgba(246,169,201,.5);animation:ring 3.6s var(--ease) infinite}
+.btn-wish::after{animation-delay:1.8s}
+@keyframes breathe{0%,100%{box-shadow:0 0 34px rgba(246,169,201,.38),0 0 90px rgba(240,203,141,.2),inset 0 0 28px rgba(255,255,255,.13)}
+  50%{box-shadow:0 0 52px rgba(246,169,201,.52),0 0 120px rgba(240,203,141,.3),inset 0 0 34px rgba(255,255,255,.17)}}
+@keyframes ring{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.55);opacity:0}}
+
+/* 漂浮小星光装饰 */
+.sparkle{position:absolute;pointer-events:none;animation:twinkle 4s ease-in-out infinite;opacity:.8}
+@keyframes twinkle{0%,100%{opacity:.25;transform:scale(.72) rotate(0)}50%{opacity:.95;transform:scale(1.08) rotate(18deg)}}
+
+/* ===== 内容区块 ===== */
+.section{padding:4.6rem 1.25rem}
+.container-x{max-width:720px;margin:0 auto}
+.sec-badge{display:inline-flex;align-items:center;gap:.5rem;font-size:.8rem;letter-spacing:.34em;
+  color:var(--gold);opacity:.9}
+
+/* 滚动揭示（IntersectionObserver 添加 .in） */
+.rv{opacity:0;transform:translateY(26px);transition:opacity .95s ease,transform .95s var(--ease)}
+.rv.in{opacity:1;transform:none}
+
+/* 短句时光线 */
+.moments{display:flex;flex-direction:column;gap:1.25rem;margin-top:2.1rem}
+.moment{display:flex;gap:1rem;align-items:flex-start}
+.moment-dot{flex:none;width:13px;height:13px;margin-top:.5rem;border-radius:9999px;
+  background:radial-gradient(circle at 35% 30%,#fff,#f6a9c9 60%,#e9c6ff);
+  box-shadow:0 0 12px rgba(246,169,201,.7)}
+.moment-line{flex:1;min-width:0}
+.moment.big .moment-line{font-size:1.28rem;font-weight:700}
+.moment.hl .moment-line{color:var(--gold)}
+.moment-note{font-size:.82rem;color:var(--ink-faint);letter-spacing:.16em;margin-top:.28rem}
+
+/* 信件卡片 */
+.letter-card{padding:2.5rem 1.85rem 2.2rem;line-height:2.08;font-size:1.03rem}
+.letter-card p{margin:0 0 1.05em}
+.letter-sig{text-align:right;margin-top:1.6rem;color:var(--gold);letter-spacing:.12em}
+
+/* 许愿区 */
+.wish-textarea{
+  width:100%;min-height:126px;resize:vertical;padding:.95rem 1.05rem;color:var(--ink);
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.2);border-radius:18px;
+  line-height:1.9;transition:border-color .3s,box-shadow .3s;
+}
+.wish-textarea::placeholder{color:var(--ink-faint)}
+.wish-textarea:focus{outline:none;border-color:rgba(246,169,201,.75);box-shadow:0 0 0 4px rgba(246,169,201,.14),0 0 24px rgba(246,169,201,.18)}
+.wish-saved{margin-top:1.1rem;padding:.95rem 1.1rem;border-radius:16px;
+  background:rgba(240,203,141,.09);border:1px dashed rgba(240,203,141,.4);font-size:.95rem;line-height:1.8}
+
+/* ===== CSS 旋转生日蛋糕（纯 CSS，无 3D 库） ===== */
+.cake-float{animation:floaty 6.5s ease-in-out infinite}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+.cake-wrap{position:relative;width:212px;height:212px;margin:0 auto;animation:cakeSpin 30s linear infinite}
+@keyframes cakeSpin{to{transform:rotate(360deg)}}
+.cake-plate{position:absolute;inset:4px;border-radius:50%;
+  background:radial-gradient(circle at 38% 30%,#fffdf8,#f9dcec 52%,#ecc0da 78%,#d9a3c7 100%);
+  box-shadow:0 8px 28px rgba(5,2,14,.4),inset 0 2px 8px rgba(255,255,255,.75)}
+.cake-body{position:absolute;inset:26px;border-radius:50%;
+  background:conic-gradient(from 30deg,#f9c9e0,#f0cb8d,#f9c9e0,#e9c6ff,#f9c9e0,#f0cb8d,#f9c6dc,#e9c6ff,#f9c9e0);
+  box-shadow:inset 0 -12px 28px rgba(118,58,108,.4)}
+.cake-top{position:absolute;inset:46px;border-radius:50%;
+  background:radial-gradient(circle at 42% 36%,#fffaf0,#ffe9d4 58%,#ffd9b6 100%);
+  box-shadow:inset 0 -8px 20px rgba(240,160,120,.38)}
+.cake-msg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  color:#c98a5e;font-weight:700;font-size:.86rem;letter-spacing:.2em;
+  text-shadow:0 1px 2px rgba(255,255,255,.65)}
+.candle{position:absolute;width:7px;height:22px;border-radius:4px;
+  background:linear-gradient(180deg,#fff3cc,#f6c98f 70%,#e8a86f);
+  transform-origin:bottom center;box-shadow:0 2px 6px rgba(90,40,20,.35)}
+.candle::after{content:"";position:absolute;left:50%;top:-11px;width:9px;height:13px;transform:translateX(-50%);
+  border-radius:50% 50% 50% 50%/62% 62% 38% 38%;
+  background:radial-gradient(circle at 50% 30%,#fff8d9,#ffd27a 52%,rgba(255,190,90,.16) 74%,transparent 82%);
+  animation:flame 1.5s ease-in-out infinite alternate}
+@keyframes flame{from{transform:translateX(-50%) scale(1) rotate(-3deg)}to{transform:translateX(-50%) scale(1.16) rotate(3deg)}}
+.c1{left:calc(50% - 3.5px);top:36px}
+.c2{left:50px;top:110px;transform:rotate(-16deg)}
+.c3{right:50px;top:110px;transform:rotate(16deg)}
+/* 蜡烛可点击熄灭 */
+.candle{cursor:pointer;transition:opacity .4s}
+.candle.blown{opacity:.55}
+.candle.blown::after{opacity:0;transform:translateX(-50%) scale(0);transition:all .45s ease}
+.candle-hint{font-size:.78rem;color:var(--ink-faint);letter-spacing:.14em;margin-top:.5rem}
+
+/* 浮动提示（吹灭蜡烛 / 互动反馈） */
+.float-tip{position:fixed;left:50%;top:36%;transform:translate(-50%,-50%) scale(.9);z-index:80;
+  font-size:1.35rem;font-weight:700;color:var(--gold);letter-spacing:.12em;
+  text-shadow:0 0 22px rgba(240,203,141,.65),0 0 50px rgba(246,169,201,.3);
+  opacity:0;pointer-events:none;transition:opacity .45s ease,transform .45s var(--ease)}
+.float-tip.show{opacity:1;transform:translate(-50%,-50%) scale(1.06)}
+
+/* 幽灵按钮：再放一次烟花 */
+.btn-ghost{display:inline-flex;align-items:center;gap:.45rem;padding:.55rem 1.5rem;border-radius:9999px;
+  border:1px solid rgba(246,169,201,.38);background:rgba(255,255,255,.05);
+  color:var(--ink-dim);font-size:.82rem;letter-spacing:.16em;transition:all .3s var(--ease)}
+.btn-ghost:hover{border-color:rgba(246,169,201,.75);color:var(--ink);background:rgba(246,169,201,.09);transform:translateY(-1px)}
+
+/* ===== 音乐开关 ===== */
+#musicToggle{position:fixed;top:1.1rem;right:1.1rem;z-index:70;width:46px;height:46px;border-radius:9999px;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.24);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:var(--ink);
+  box-shadow:0 4px 18px rgba(4,1,12,.3);
+  opacity:0;pointer-events:none;transition:opacity .8s ease,transform .3s var(--ease)}
+body.started #musicToggle{opacity:1;pointer-events:auto}
+#musicToggle:hover{transform:scale(1.08)}
+#musicToggle .ic-mute{display:none}
+#musicToggle[aria-pressed="true"] .ic-mute{display:block}
+#musicToggle[aria-pressed="true"] .ic-play{display:none}
+#musicToggle.playing{animation:breathBtn 2.6s ease-in-out infinite}
+@keyframes breathBtn{0%,100%{box-shadow:0 4px 18px rgba(4,1,12,.3),0 0 0 0 rgba(246,169,201,.35)}
+  50%{box-shadow:0 4px 18px rgba(4,1,12,.3),0 0 0 8px rgba(246,169,201,0)}}
+#iosHint{position:fixed;top:4.2rem;right:1.1rem;z-index:69;font-size:.72rem;color:rgba(253,244,255,.5);
+  display:none;align-items:center;gap:.35rem;letter-spacing:.04em}
+
+/* ===== 许愿星光弹窗 ===== */
+#wishModal{position:fixed;inset:0;z-index:90;display:none;align-items:center;justify-content:center;padding:1.25rem}
+#wishModal.open{display:flex}
+#wishModal .backdrop{position:absolute;inset:0;background:rgba(9,4,20,.62);backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal-card{position:relative;width:100%;max-width:430px;padding:2.4rem 1.8rem;text-align:center;
+  animation:popIn .55s var(--ease)}
+@keyframes popIn{from{opacity:0;transform:scale(.86) translateY(16px)}to{opacity:1;transform:none}}
+.modal-star{position:absolute;animation:twinkle 3.4s ease-in-out infinite}
+
+/* ===== 全屏闪光层 ===== */
+#flash{position:fixed;inset:0;z-index:80;pointer-events:none;opacity:0;
+  background:radial-gradient(circle at 50% 42%,rgba(255,236,214,.9),rgba(246,169,201,.35) 42%,transparent 75%)}
+
+/* ===== 底部 & 彩蛋 ===== */
+.footer-note{text-align:center;color:var(--ink-faint);font-size:.8rem;letter-spacing:.3em;padding:3.2rem 1rem 1rem}
+.easter{text-align:center;color:rgba(253,244,255,.14);font-size:.74rem;letter-spacing:.24em;
+  padding:1.6rem 1rem 3.4rem;opacity:0;transition:opacity 1.6s ease}
+.easter.see{opacity:1}
+
+/* ===== 减少动态效果：尊重系统偏好 ===== */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+  html{scroll-behavior:auto}
+  .rv{opacity:1;transform:none}
+  .easter{opacity:1}
+}
+
+/* ===== 移动端微调 ===== */
+@media (max-width:520px){
+  .letter-card{padding:2rem 1.35rem 1.8rem;font-size:1rem}
+  .btn-wish{width:156px;height:156px}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== 背景层 ===== -->
+<div id="bg" aria-hidden="true"><div id="bgGold"></div></div>
+<canvas id="starCanvas" aria-hidden="true"></canvas>
+<canvas id="fxCanvas" aria-hidden="true"></canvas>
+<div id="flash" aria-hidden="true"></div>
+<div id="floatTip" class="float-tip" aria-live="polite"></div>
+
+<noscript><div style="position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;background:#150a2b;color:#fdf4ff;padding:2rem;text-align:center">需要开启 JavaScript 才能查看这份生日祝福。</div></noscript>
+
+<!-- ===== 密码锁 ===== -->
+<div id="lockScreen">
+  <div class="glass lock-card">
+    <p class="script text-[28px] text-[#f6c58f] glow-soft leading-none mb-1">Happy Birthday</p>
+    <h1 class="text-[1.5rem] font-black tracking-[.3em] glow-soft mb-1">致 懿千儿</h1>
+    <p class="text-[13px] text-[#fdf4ff]/60 tracking-[.18em] mb-5">这是一份为你准备的生日惊喜</p>
+
+    <!-- 密码输入：生日 1012 -->
+    <form id="lockForm" autocomplete="off">
+      <input id="lockCode" class="lock-input" type="password" inputmode="numeric" maxlength="6"
+             placeholder="请输入密码" aria-label="请输入密码">
+      <div id="lockErr" class="lock-err" role="alert"></div>
+      <button type="submit" class="btn-main w-full mt-3">进入祝福</button>
+    </form>
+    <p class="text-[11px] text-[#fdf4ff]/35 tracking-[.22em] mt-4">小提示：与日期有关</p>
+  </div>
+</div>
+
+<!-- ===== 音乐开关（点击许愿按钮后出现） ===== -->
+<button id="musicToggle" type="button" aria-label="背景音乐开关" role="switch" aria-checked="false" aria-pressed="false">
+  <svg class="ic-play" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+  <svg class="ic-mute" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/><path d="M3 4l18 16"/></svg>
+</button>
+<div id="iosHint" role="note">iPhone 请关闭侧边静音键</div>
+
+<!-- ===== 主内容 ===== -->
+<main id="main">
+
+  <!-- ===== Hero：黑屏 → 发光许愿按钮 ===== -->
+  <section id="hero">
+    <!-- 点击前的黑屏状态 -->
+    <div class="hero-pre flex flex-col items-center">
+      <!-- 漂浮星光装饰 -->
+      <svg class="sparkle" style="top:16%;left:16%;width:22px;animation-delay:.6s" viewBox="0 0 24 24" fill="#f6a9c9" aria-hidden="true"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12C7 11 11 7 12 0Z"/></svg>
+      <svg class="sparkle" style="top:24%;right:18%;width:14px;animation-delay:1.8s" viewBox="0 0 24 24" fill="#f0cb8d" aria-hidden="true"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12C7 11 11 7 12 0Z"/></svg>
+      <svg class="sparkle" style="bottom:20%;left:22%;width:16px;animation-delay:2.6s" viewBox="0 0 24 24" fill="#c3aeec" aria-hidden="true"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12C7 11 11 7 12 0Z"/></svg>
+      <svg class="sparkle" style="bottom:26%;right:24%;width:12px;animation-delay:1.1s" viewBox="0 0 24 24" fill="#f6a9c9" aria-hidden="true"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12C7 11 11 7 12 0Z"/></svg>
+
+      <p class="script text-[26px] text-[#f6c58f] glow-soft leading-none mb-7">Happy Birthday</p>
+      <button id="wishBtn" class="btn-wish" type="button" aria-label="点亮星光，解锁生日祝福">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="#fdf4ff" aria-hidden="true"><path d="M12 2c1.2 8 4.8 11.8 10 12-5.2 1.2-8.8 5-10 10-1.2-5-4.8-8.8-10-10 5.2-.2 8.8-4 10-12Z"/></svg>
+        <span class="text-[15px] font-bold tracking-[.3em] text-[#fdf4ff] glow-soft">点亮星光</span>
+        <span class="text-[10px] tracking-[.24em] text-[#fdf4ff]/70">点击解锁祝福</span>
+      </button>
+      <p class="text-[12px] text-[#fdf4ff]/45 tracking-[.2em] mt-8">点击后，会有一场为你准备的星光绽放</p>
+    </div>
+
+    <!-- 点击后的主标题 -->
+    <div class="hero-title w-full">
+      <h1 class="title-glow text-[clamp(1.7rem,6.4vw,3.1rem)] leading-tight">致懿千儿｜张笑涵，生日快乐✨</h1>
+      <p class="script text-[22px] text-[#f6c58f] mt-4">To 千儿小姐 · October 12</p>
+      <p class="text-[13px] text-[#fdf4ff]/70 tracking-[.3em] mt-2">2001 · 天秤座 · 10.12</p>
+      <div class="flex items-center justify-center gap-3 mt-7">
+        <span class="h-px w-16 bg-gradient-to-r from-transparent to-[#f6a9c9]/70" aria-hidden="true"></span>
+        <span class="text-[#f0cb8d] tracking-[.4em] text-xs">WELCOME</span>
+        <span class="h-px w-16 bg-gradient-to-l from-transparent to-[#f6a9c9]/70" aria-hidden="true"></span>
+      </div>
+      <p class="mt-6 text-[15px] text-[#fdf4ff]/85 glow-soft">千儿，欢迎来到属于你的这一天</p>
+    </div>
+  </section>
+
+  <!-- ===== 内容区（点击许愿按钮后逐渐显现） ===== -->
+  <section id="content">
+
+    <!-- ===== 短句：我们的时光 ===== -->
+    <div class="section">
+      <div class="container-x">
+        <p class="sec-badge rv"><span class="h-px w-8 bg-[#f0cb8d]/60" aria-hidden="true"></span>我们的时光</p>
+        <div class="moments">
+          <div class="moment big rv">
+            <span class="moment-dot" aria-hidden="true"></span>
+            <div class="moment-line">2019 · 会玩初遇</div>
+          </div>
+          <div class="moment rv" style="transition-delay:.08s">
+            <span class="moment-dot" aria-hidden="true"></span>
+            <div class="moment-line">还记得你刚上大学那会儿<span class="moment-note block">在会玩APP隔着屏幕认识的我们</span></div>
+          </div>
+          <div class="moment rv" style="transition-delay:.16s">
+            <span class="moment-dot" aria-hidden="true"></span>
+            <div class="moment-line">隔着网络认识的我们<span class="moment-note block">却一晃，走到了现在</span></div>
+          </div>
+          <div class="moment rv" style="transition-delay:.24s">
+            <span class="moment-dot" aria-hidden="true"></span>
+            <div class="moment-line">一晃，走到现在<span class="moment-note block">愿你始终被这个世界温柔以待</span></div>
+          </div>
+          <div class="moment hl rv" style="transition-delay:.32s">
+            <span class="moment-dot" aria-hidden="true"></span>
+            <div class="moment-line">天秤独有的浪漫，专属于你</div>
+          </div>
+          <div class="moment rv" style="transition-delay:.4s">
+            <span class="moment-dot" aria-hidden="true"></span>
+            <div class="moment-line">我们已经认识 <span id="meetDays" class="gold font-bold">—</span> 天啦<span class="moment-note block">从 2019 年会玩初遇到现在</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 长段走心祝福 ===== -->
+    <div class="section pt-0">
+      <div class="container-x">
+        <p class="sec-badge rv"><span class="h-px w-8 bg-[#f0cb8d]/60" aria-hidden="true"></span>写给你的一封信</p>
+        <div class="glass letter-card rv mt-5">
+          <p class="font-bold text-[1.12rem] glow-soft">千儿：</p>
+          <p>还记得 2019 年在会玩刚认识的时候，你才刚踏入大学。</p>
+          <p>你总能认识很多新朋友，但真正能走进心底的很少。你很需要有人陪着，偶尔会没有安全感。</p>
+          <p>从最开始接触网络到现在，你一直保有一份难得的单纯。</p>
+          <p>你真的特别优秀，能流畅自如地在两种语言间切换，还懂音乐、会弹钢琴，高尔夫，藏着好多闪闪发光的技能。</p>
+          <p>我知道你最近迷茫，或许是心里盼着一份可以长久、真诚的陪伴，也或许是找寻属于自己的价值。</p>
+          <p>10 月 12 日，你的生日啦。愿你保持天秤那份温柔通透，早日等到长久温暖的陪伴，看见自己本身就很耀眼。愿所想皆有回应，岁岁安稳。生日快乐。</p>
+          <p class="letter-sig">—— 无常</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 许愿区 ===== -->
+    <div class="section pt-0">
+      <div class="container-x">
+        <p class="sec-badge rv"><span class="h-px w-8 bg-[#f0cb8d]/60" aria-hidden="true"></span>许个愿吧</p>
+        <div class="glass rv mt-5 p-6 md:p-8 text-center">
+          <p class="text-[15px] text-[#fdf4ff]/80 leading-loose mb-4">在心里默念三遍，然后把愿望写下来<br class="hidden md:block">星光会替你好好收藏</p>
+          <textarea id="wishInput" class="wish-textarea" rows="4" maxlength="200"
+                    placeholder="写下你的生日愿望✨" aria-label="写下你的生日愿望"></textarea>
+          <div class="flex justify-center mt-4">
+            <button id="wishSubmit" class="btn-main" type="button">许下心愿</button>
+          </div>
+          <div id="wishSaved" class="wish-saved hidden text-left" aria-live="polite"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== CSS 旋转生日蛋糕 ===== -->
+    <div class="section pt-0">
+      <div class="container-x text-center">
+        <p class="sec-badge rv justify-center"><span class="h-px w-8 bg-[#f0cb8d]/60" aria-hidden="true"></span>生日蛋糕<span class="h-px w-8 bg-[#f0cb8d]/60" aria-hidden="true"></span></p>
+        <div class="rv mt-9">
+          <div class="cake-float">
+            <div class="cake-wrap">
+              <div class="cake-plate"></div>
+              <div class="cake-body"></div>
+              <div class="cake-top"></div>
+              <span class="cake-msg">10·12</span>
+              <span class="candle c1" role="button" tabindex="0" aria-label="吹灭蜡烛"></span>
+              <span class="candle c2" role="button" tabindex="0" aria-label="吹灭蜡烛"></span>
+              <span class="candle c3" role="button" tabindex="0" aria-label="吹灭蜡烛"></span>
+            </div>
+          </div>
+          <p class="candle-hint">点一点蜡烛，可以吹灭哦</p>
+        </div>
+        <p class="rv text-[13px] text-[#fdf4ff]/55 tracking-[.22em] mt-6">愿你往后的日子，每天都甜甜的</p>
+        <div class="rv mt-7 flex justify-center">
+          <button id="replayBtn" class="btn-ghost" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2c1.2 7 4.8 10.8 10 12-5.2 1.2-8.8 5-10 10-1.2-5-4.8-8.8-10-10 5.2-1.2 8.8-5 10-12Z"/></svg>
+            再放一次烟花
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 底部 ===== -->
+    <footer class="rv pt-6">
+      <p class="footer-note">—— 致 千儿 · 2026 ——</p>
+    </footer>
+
+    <!-- ===== 隐藏彩蛋：滚动到最底端才会显现的浅淡小字 ===== -->
+    <div class="easter">回忆本身就足够珍贵。</div>
+
+  </section>
+
+</main>
+
+<!-- ===== 许愿星光弹窗 ===== -->
+<div id="wishModal" role="dialog" aria-modal="true" aria-labelledby="wishModalTitle">
+  <div class="backdrop" data-close></div>
+  <div class="glass modal-card">
+    <svg class="modal-star" style="width:20px;top:18px;left:22px" viewBox="0 0 24 24" fill="#f6a9c9" aria-hidden="true"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12C7 11 11 7 12 0Z"/></svg>
+    <svg class="modal-star" style="width:13px;top:52px;right:26px;animation-delay:1.2s" viewBox="0 0 24 24" fill="#f0cb8d" aria-hidden="true"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12C7 11 11 7 12 0Z"/></svg>
+    <svg class="modal-star" style="width:15px;bottom:30px;left:30px;animation-delay:2s" viewBox="0 0 24 24" fill="#c3aeec" aria-hidden="true"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12C7 11 11 7 12 0Z"/></svg>
+    <svg class="modal-star" style="width:11px;bottom:44px;right:36px;animation-delay:.7s" viewBox="0 0 24 24" fill="#f6a9c9" aria-hidden="true"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12C7 11 11 7 12 0Z"/></svg>
+    <p class="text-[11px] tracking-[.4em] text-[#f0cb8d] mb-2">WISH</p>
+    <h2 id="wishModalTitle" class="text-xl font-black tracking-[.22em] glow-soft mb-4">心愿已收藏</h2>
+    <p id="wishModalText" class="text-[15px] leading-[2] text-[#fdf4ff]/90 px-2"></p>
+    <p class="text-[12px] text-[#fdf4ff]/45 mt-5 tracking-[.1em]">心愿只保存在你的浏览器本地，不会上传</p>
+    <button class="btn-main mt-5" data-close type="button">好的，收好啦</button>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   致懿千儿 · 生日祝福页 脚本
+   模块：密码锁 / 星光粒子 / 烟花彩带 / 滚动渐变 / 音乐 / 许愿
+   ============================================================ */
+
+/* ---------- 配置区 ---------- */
+const LOCK_CODE = "1012";                 // 密码：千儿的生日
+// ↓ 音乐替换指引：把 "" 改为 "assets/birthday.mp3"（文件放本文件夹 assets/ 目录下）
+//   留空则使用内置 Web Audio 合成的《生日快乐》八音盒旋律（离线可用）
+const MUSIC_SRC  = "";
+const WISH_KEY   = "bday_wish_qianger_1012";  // 心愿存 localStorage 的键
+const MUSIC_PREF = "bday_music_pref";         // 音乐开关偏好键
+const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches; // 系统减少动态
+
+/* ---------- 密码锁 ---------- */
+const lockForm  = document.getElementById("lockForm");
+const lockCode  = document.getElementById("lockCode");
+const lockErr   = document.getElementById("lockErr");
+const lockCard  = lockForm.closest(".lock-card");
+
+function unlock(){
+  document.body.classList.add("unlocked");
+  const ls = document.getElementById("lockScreen");
+  ls.classList.add("gone");
+  setTimeout(()=>{ ls.style.display = "none"; }, 950);
+}
+function lockFail(){
+  lockErr.textContent = "密码好像不对哦，再想想～";
+  lockErr.classList.add("show");
+  lockCard.classList.remove("shake");
+  void lockCard.offsetWidth;               // 重置动画
+  lockCard.classList.add("shake");
+  lockCode.select();
+  setTimeout(()=>lockErr.classList.remove("show"), 2200);
+}
+lockForm.addEventListener("submit", e=>{
+  e.preventDefault();
+  if (lockCode.value.trim() === LOCK_CODE) unlock(); else lockFail();
+});
+
+/* ---------- 许愿按钮：解锁内容 + 烟花 + 音乐 ---------- */
+const wishBtn = document.getElementById("wishBtn");
+wishBtn.addEventListener("click", ()=>{
+  if (document.body.classList.contains("started")) return;
+  document.body.classList.add("started");   // 触发主标题与内容渐现
+  celebrate();
+  startMusic();
+});
+
+/* ============================================================
+   画布基础（尺寸 / DPR）
+   ============================================================ */
+const starCanvas = document.getElementById("starCanvas");
+const sctx = starCanvas.getContext("2d");
+const fxCanvas = document.getElementById("fxCanvas");
+const fctx = fxCanvas.getContext("2d");
+let W = 0, H = 0, DPR = 1;
+function sizeAll(){
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  W = innerWidth; H = innerHeight;
+  [starCanvas, fxCanvas].forEach(c=>{ c.width = W*DPR; c.height = H*DPR; });
+  sctx.setTransform(DPR,0,0,DPR,0,0);
+  fctx.setTransform(DPR,0,0,DPR,0,0);
+  makeStars();
+}
+addEventListener("resize", sizeAll);
+
+/* ============================================================
+   星光粒子背景：持续漂浮 + 跟随鼠标轻微流动
+   ============================================================ */
+let stars = [];
+function makeStars(){
+  stars = [];
+  const n = Math.min(150, Math.floor(W*H/9000));
+  for (let i=0;i<n;i++) stars.push({
+    x: Math.random()*W, y: Math.random()*H,
+    r: 0.4 + Math.random()*1.5,
+    base: 0.35 + Math.random()*0.5,
+    ph: Math.random()*Math.PI*2,
+    sp: 0.4 + Math.random()*1.1,
+    vx:0, vy:0
+  });
+}
+let mx = -1e4, my = -1e4, lastTrail = 0;
+addEventListener("pointermove", e=>{
+  mx = e.clientX; my = e.clientY;
+  // 鼠标拖尾：节流生成极淡的小星光
+  if (!REDUCED){
+    const now = performance.now();
+    if (now - lastTrail > 85){
+      lastTrail = now;
+      parts.push({
+        x: e.clientX + (Math.random()-0.5)*6, y: e.clientY + (Math.random()-0.5)*6,
+        vx: (Math.random()-0.5)*0.3, vy: -0.15 - Math.random()*0.25,
+        life: 0.7, decay: 0.026, size: 0.6 + Math.random()*0.8,
+        color: "#fff7ef", kind:"spark", rot:0, vr:0, g:0, drag:0.98
+      });
+    }
+  }
+}, {passive:true});
+
+function stepStars(t){
+  sctx.clearRect(0,0,W,H);
+  const sec = t/1000, R = 260, R2 = R*R;
+  for (const s of stars){
+    const dx = mx-s.x, dy = my-s.y, d2 = dx*dx+dy*dy;
+    if (d2 < R2){                       // 靠近光标：轻微流向
+      const f = (1 - Math.sqrt(d2)/R) * 0.32;
+      s.vx += (dx/Math.max(1,Math.sqrt(d2))) * f * 0.22;
+      s.vy += (dy/Math.max(1,Math.sqrt(d2))) * f * 0.22;
+    }
+    s.vx *= 0.94; s.vy *= 0.94;
+    s.x += s.vx + Math.sin(sec*0.05 + s.ph)*0.22;
+    s.y += s.vy + Math.cos(sec*0.04 + s.ph)*0.18;
+    let a = s.base * (0.55 + 0.45*Math.sin(sec*s.sp + s.ph));
+    if (d2 < R2) a = Math.min(1, a + 0.25);
+    sctx.globalAlpha = Math.max(0, a);
+    sctx.fillStyle = "#fdf4ff";
+    sctx.beginPath(); sctx.arc(s.x, s.y, s.r, 0, Math.PI*2); sctx.fill();
+  }
+  if (mx > -1000){                       // 光标处极淡的柔光
+    const g = sctx.createRadialGradient(mx,my,0,mx,my,110);
+    g.addColorStop(0,"rgba(246,169,201,0.10)");
+    g.addColorStop(1,"rgba(246,169,201,0)");
+    sctx.globalAlpha = 1;
+    sctx.fillStyle = g;
+    sctx.fillRect(mx-110, my-110, 220, 220);
+  }
+}
+function starLoop(t){ stepStars(t); requestAnimationFrame(starLoop); }
+
+/* ============================================================
+   烟花 / 彩带 / 金色粒子（点击许愿按钮时全屏爆发）
+   ============================================================ */
+const PALETTE = ["#f6a9c9","#f0cb8d","#e9c6ff","#fff7ef","#ffd9a0"];
+let parts = [];
+
+function burstFx(x, y, power){
+  const n = 34 * power;
+  for (let i=0;i<n;i++){
+    const ang = Math.random()*Math.PI*2;
+    const sp  = (1.6 + Math.random()*3.4) * (0.55 + 0.45*power);
+    parts.push({
+      x, y,
+      vx: Math.cos(ang)*sp, vy: Math.sin(ang)*sp - 1.1,
+      life:1, decay: 0.008 + Math.random()*0.012,
+      size: 1.2 + Math.random()*2,
+      color: PALETTE[(Math.random()*PALETTE.length)|0],
+      kind: Math.random()<0.75 ? "spark" : "confetti",
+      rot: Math.random()*Math.PI, vr:(Math.random()-0.5)*0.22,
+      g:0.045, drag:0.985
+    });
+  }
+}
+function confettiDrop(){
+  parts.push({
+    x: Math.random()*W, y:-14,
+    vx:(Math.random()-0.5)*0.7, vy: 0.8 + Math.random()*1.2,
+    life:1, decay:0.0035,
+    size: 4 + Math.random()*4,
+    color: PALETTE[(Math.random()*PALETTE.length)|0],
+    kind:"confetti",
+    rot: Math.random()*Math.PI, vr:(Math.random()-0.5)*0.3,
+    g:0.012, drag:0.99
+  });
+}
+function stepFx(){
+  fctx.clearRect(0,0,W,H);
+  for (let i=parts.length-1;i>=0;i--){
+    const p = parts[i];
+    p.vy += p.g; p.vx *= p.drag; p.vy *= p.drag;
+    p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.life -= p.decay;
+    if (p.life<=0 || p.y>H+30){ parts.splice(i,1); continue; }
+    fctx.globalAlpha = Math.max(0, p.life);
+    if (p.kind === "confetti"){
+      fctx.save(); fctx.translate(p.x,p.y); fctx.rotate(p.rot);
+      fctx.fillStyle = p.color;
+      fctx.fillRect(-p.size/2, -p.size/3, p.size, p.size*0.66);
+      fctx.restore();
+    } else {
+      fctx.fillStyle = p.color;
+      fctx.beginPath(); fctx.arc(p.x, p.y, p.size, 0, Math.PI*2); fctx.fill();
+    }
+  }
+  fctx.globalAlpha = 1;
+}
+function fxLoop(){ stepFx(); requestAnimationFrame(fxLoop); }
+
+function celebrate(){
+  // 全屏柔光闪一下（不刺眼）
+  const flash = document.getElementById("flash");
+  flash.style.transition = "none";
+  flash.style.opacity = "1";
+  requestAnimationFrame(()=>{
+    flash.style.transition = "opacity 1.5s ease";
+    flash.style.opacity = "0";
+  });
+  if (REDUCED) return;                    // 减少动态：只保留柔光
+  // 中心大爆发 + 依次绽放的烟花
+  burstFx(W*0.5, H*0.42, 3);
+  const spots = [[0.2,0.3],[0.8,0.28],[0.32,0.62],[0.72,0.66],[0.5,0.2],[0.14,0.55],[0.88,0.52],[0.62,0.4]];
+  spots.forEach((s,i)=> setTimeout(()=> burstFx(W*s[0], H*s[1], i===0?3:2), 260*i));
+  // 彩带雨
+  for (let i=0;i<90;i++) setTimeout(confettiDrop, Math.random()*2200);
+  // 之后每隔一段温柔的小烟花，维持氛围（很轻，不抢阅读）
+  setInterval(()=>{ if(!document.hidden) burstFx(W*(0.2+Math.random()*0.6), H*(0.18+Math.random()*0.45), 1); }, 13000);
+}
+
+/* 小规模星光爆发（点击页面 / 吹灭蜡烛时用，柔和不刺眼） */
+function miniBurst(x, y){
+  if (REDUCED) return;
+  for (let i=0;i<14;i++){
+    const ang = Math.random()*Math.PI*2, sp = 0.6 + Math.random()*1.8;
+    parts.push({
+      x, y, vx: Math.cos(ang)*sp, vy: Math.sin(ang)*sp - 0.6,
+      life:1, decay: 0.018 + Math.random()*0.012,
+      size: 0.8 + Math.random()*1.4,
+      color: PALETTE[(Math.random()*PALETTE.length)|0],
+      kind:"spark", rot:0, vr:0, g:0.02, drag:0.97
+    });
+  }
+}
+/* 再放一次烟花（按钮触发，不重播音乐） */
+function replayFireworks(){
+  if (REDUCED) return;
+  burstFx(W*0.5, H*0.42, 3);
+  const spots = [[0.25,0.3],[0.75,0.3],[0.5,0.55],[0.3,0.6],[0.7,0.6]];
+  spots.forEach((s,i)=> setTimeout(()=> burstFx(W*s[0], H*s[1], 2), 220*i));
+  for (let i=0;i<50;i++) setTimeout(confettiDrop, Math.random()*1600);
+}
+/* 浮动文字提示 */
+function showFloatTip(text){
+  const tip = document.getElementById("floatTip");
+  tip.textContent = text;
+  tip.classList.add("show");
+  setTimeout(()=> tip.classList.remove("show"), 2200);
+}
+
+/* ============================================================
+   滚动：背景缓慢渐变 + 平滑滚动 + 滚动揭示
+   ============================================================ */
+const bg = document.getElementById("bg");
+const bgGold = document.getElementById("bgGold");
+// 两段渐变插值：顶部深紫夜 → 玫瑰紫 → 淡紫夜
+const P_TOP = [21,10,43], P_MID = [58,28,68], P_BOT = [33,19,66];
+const P_TOP2= [36,16,56], P_MID2= [74,36,86], P_BOT2= [52,30,92];
+function mix(a,b,t){ return a.map((v,i)=>Math.round(v+(b[i]-v)*t)); }
+let ticking = false;
+function onScroll(){
+  if (ticking) return;
+  ticking = true;
+  requestAnimationFrame(()=>{
+    const max = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+    const p = Math.min(1, Math.max(0, scrollY/max));
+    const k = p < 0.5 ? p*2 : (p-0.5)*2;   // 0→1 全程
+    bg.style.setProperty("--bgTop",  mix(P_TOP, P_TOP2, k).join(","));
+    bg.style.setProperty("--bgMid",  mix(P_MID, P_MID2, k).join(","));
+    bg.style.setProperty("--bgBot",  mix(P_BOT, P_BOT2, k).join(","));
+    bgGold.style.transform = "translate3d(" + (p*60) + "px," + (p*110) + "px,0)";
+    ticking = false;
+  });
+}
+addEventListener("scroll", onScroll, {passive:true});
+
+/* 滚动显现 */
+const io = new IntersectionObserver(es=>{
+  es.forEach(e=>{ if (e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
+}, {threshold:.16});
+document.querySelectorAll(".rv").forEach(el=>io.observe(el));
+/* 底部彩蛋：滚到底才显现 */
+const eo = new IntersectionObserver(es=>{
+  es.forEach(e=>{ if (e.isIntersecting){ e.target.classList.add("see"); eo.unobserve(e.target); } });
+}, {threshold:.55});
+const easterEl = document.querySelector(".easter");
+if (easterEl) eo.observe(easterEl);
+
+/* ============================================================
+   音乐：优先 MP3（见顶部 MUSIC_SRC），缺失自动回退内置合成
+   ============================================================ */
+const music = { mode:"none", audio:null, ctx:null, master:null, analyser:null, playing:false, started:false };
+const musicToggle = document.getElementById("musicToggle");
+musicToggle.addEventListener("click", toggleMusic);
+
+/* 《生日快乐》八音盒旋律（频率 Hz, 拍数） */
+const MELODY = [
+  [392,.75],[392,.25],[440,1],[392,1],[523.25,1],[493.88,2],
+  [392,.75],[392,.25],[440,1],[392,1],[587.33,1],[523.25,2],
+  [392,.75],[392,.25],[783.99,1],[659.25,1],[523.25,1],[493.88,1],[440,2],
+  [698.46,.75],[698.46,.25],[659.25,1],[523.25,1],[587.33,1],[523.25,2.5]
+];
+let nextNote = 0, noteIdx = 0;
+
+function synthInit(){
+  if (music.ctx) return;
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (!AC) return;
+  const ctx = new AC();
+  const master = ctx.createGain(); master.gain.value = 0;
+  const analyser = ctx.createAnalyser(); analyser.fftSize = 256;
+  master.connect(analyser); analyser.connect(ctx.destination);
+  // 轻回声，营造八音盒氛围
+  const delay = ctx.createDelay(1); delay.delayTime.value = 0.32;
+  const fb = ctx.createGain(); fb.gain.value = 0.26;
+  const wet = ctx.createGain(); wet.gain.value = 0.2;
+  master.connect(delay); delay.connect(fb); fb.connect(delay); delay.connect(wet); wet.connect(ctx.destination);
+  music.ctx = ctx; music.master = master; music.analyser = analyser;
+  music.mode = "synth";
+}
+function playNote(freq, t, dur){
+  [[freq,0.5,"sine"],[freq*2,0.12,"triangle"]].forEach(([f,v,type])=>{
+    const o = music.ctx.createOscillator();
+    const g = music.ctx.createGain();
+    o.type = type; o.frequency.value = f;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(v, t+0.014);
+    g.gain.exponentialRampToValueAtTime(0.0001, t+dur+0.02);
+    o.connect(g); g.connect(music.master);
+    o.start(t); o.stop(t+dur+0.1);
+  });
+}
+function scheduler(){
+  if (music.mode !== "synth" || !music.ctx) return;
+  while (nextNote < music.ctx.currentTime + 0.3){
+    const [freq,d] = MELODY[noteIdx];
+    const dur = d*0.62;
+    playNote(freq, nextNote, dur);
+    nextNote += dur;
+    noteIdx = (noteIdx+1) % MELODY.length;
+  }
+}
+setInterval(scheduler, 60);               // lookahead 排程：时间以音频时钟为准
+
+function fadeMaster(target, ms){
+  const ctx = music.ctx, g = music.master.gain, now = ctx.currentTime;
+  g.cancelScheduledValues(now);
+  g.setValueAtTime(g.value, now);
+  g.linearRampToValueAtTime(target, now + ms/1000);
+}
+function syncToggle(){
+  musicToggle.setAttribute("aria-pressed", String(music.playing));
+  musicToggle.setAttribute("aria-checked", String(music.playing));
+  musicToggle.classList.toggle("playing", music.playing);
+}
+function isIOS(){ return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream; }
+function checkIOSHint(){                    // iOS 合成音受侧面静音键控制，给个小提示
+  if (!isIOS() || music.mode !== "synth" || !music.analyser) return;
+  setTimeout(()=>{
+    const arr = new Uint8Array(music.analyser.frequencyBinCount);
+    music.analyser.getByteFrequencyData(arr);
+    if (Array.from(arr).every(v=>v===0)) document.getElementById("iosHint").style.display = "flex";
+  }, 700);
+}
+
+function startMusic(){
+  if (music.started) return;
+  music.started = true;
+  if (MUSIC_SRC){
+    const a = new Audio(MUSIC_SRC);
+    a.loop = true; a.volume = 0.4;
+    music.audio = a; music.mode = "mp3";
+    a.addEventListener("canplay", ()=>{ if (music.audio===a){ music.playing=true; a.play().catch(()=>{}); syncToggle(); } });
+    a.addEventListener("error", ()=>{ if (music.audio===a){ music.audio=null; startSynth(); } });
+    a.load();
+    setTimeout(()=>{ if (music.audio===a && !music.playing){ music.audio=null; startSynth(); } }, 2200); // 加载超时回退
+  } else {
+    startSynth();
+  }
+}
+function startSynth(){
+  synthInit();
+  if (!music.ctx) return;
+  music.ctx.resume();
+  nextNote = music.ctx.currentTime + 0.1;
+  music.playing = true;
+  fadeMaster(0.38, 700);
+  syncToggle();
+  checkIOSHint();
+  try{ localStorage.setItem(MUSIC_PREF, "1"); }catch(e){}
+}
+function toggleMusic(){
+  if (music.mode === "mp3"){
+    if (music.playing){ music.audio.pause(); music.playing = false; }
+    else { music.audio.play().catch(()=>{}); music.playing = true; }
+  } else if (music.mode === "synth"){
+    if (music.playing){ fadeMaster(0,600); music.ctx.suspend(); music.playing = false; }
+    else { music.ctx.resume(); fadeMaster(0.38,700); music.playing = true; checkIOSHint(); }
+  } else return;
+  syncToggle();
+  try{ localStorage.setItem(MUSIC_PREF, music.playing ? "1" : "0"); }catch(e){}
+}
+
+/* ============================================================
+   许愿：保存到浏览器 localStorage（不上传任何服务器）
+   ============================================================ */
+const wishInput  = document.getElementById("wishInput");
+const wishSubmit = document.getElementById("wishSubmit");
+const wishSaved  = document.getElementById("wishSaved");
+const wishModal  = document.getElementById("wishModal");
+const wishModalText = document.getElementById("wishModalText");
+
+function escapeHtml(s){
+  return s.replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function loadWish(){ try{ return JSON.parse(localStorage.getItem(WISH_KEY)); }catch(e){ return null; } }
+function renderSavedWish(){
+  const data = loadWish();
+  if (data && data.text){
+    wishSaved.classList.remove("hidden");
+    wishSaved.innerHTML = "已悄悄许下的心愿：<br>"
+      + "<span class='text-[#f0cb8d]'>“" + escapeHtml(data.text) + "”</span>"
+      + "<br><span class='text-[12px] opacity-60'>可以重新许愿覆盖，只保存在本地浏览器</span>";
+  }
+}
+wishSubmit.addEventListener("click", ()=>{
+  const text = wishInput.value.trim();
+  if (!text){
+    wishInput.style.borderColor = "rgba(255,211,228,.85)";
+    wishInput.focus();
+    setTimeout(()=> wishInput.style.borderColor = "", 900);
+    return;
+  }
+  try{ localStorage.setItem(WISH_KEY, JSON.stringify({ text, ts: Date.now() })); }catch(e){}
+  wishModalText.textContent = text;
+  wishModal.classList.add("open");
+  renderSavedWish();
+  wishInput.value = "";
+});
+wishModal.querySelectorAll("[data-close]").forEach(el=>
+  el.addEventListener("click", ()=> wishModal.classList.remove("open")));
+document.addEventListener("keydown", e=>{ if (e.key === "Escape") wishModal.classList.remove("open"); });
+
+/* ============================================================
+   互动绑定
+   ============================================================ */
+/* 相识天数：2019 年 9 月千儿刚上大学；想换日期改下面这行即可 */
+const MEET_DATE = new Date("2019-09-01T00:00:00");
+const meetDaysEl = document.getElementById("meetDays");
+if (meetDaysEl) meetDaysEl.textContent = Math.max(1, Math.floor((Date.now() - MEET_DATE)/86400000)).toLocaleString();
+
+/* 蛋糕蜡烛：点击吹灭 / 再点点亮；三根全灭触发小烟花 + 提示 */
+let candlesLit = 3;
+document.querySelectorAll(".candle").forEach(c=>{
+  const toggle = ()=>{
+    if (c.classList.contains("blown")){
+      c.classList.remove("blown"); candlesLit++;
+    } else {
+      c.classList.add("blown"); candlesLit--;
+      const r = c.getBoundingClientRect();
+      miniBurst(r.left + r.width/2, r.top);
+      if (candlesLit === 0){
+        showFloatTip("愿望成真 ✨");
+        setTimeout(()=> burstFx(W*0.5, H*0.5, 2), 350);
+      }
+    }
+  };
+  c.addEventListener("click", e=>{ e.stopPropagation(); toggle(); });
+  c.addEventListener("keydown", e=>{ if (e.key==="Enter"||e.key===" "){ e.preventDefault(); toggle(); } });
+});
+
+/* 点击页面空白处：柔和小星光爆发（按钮/输入框等交互元素不触发） */
+document.addEventListener("click", e=>{
+  if (e.target.closest("button,input,textarea,a,.candle,#wishModal,#musicToggle")) return;
+  miniBurst(e.clientX, e.clientY);
+});
+
+/* 再放一次烟花 */
+const replayBtn = document.getElementById("replayBtn");
+if (replayBtn) replayBtn.addEventListener("click", e=>{ e.stopPropagation(); replayFireworks(); });
+
+/* ============================================================
+   启动
+   ============================================================ */
+sizeAll();
+onScroll();
+renderSavedWish();
+if (!REDUCED){ requestAnimationFrame(starLoop); fxLoop(); } else { stepStars(0); }
+</script>
+</body>
+</html>
