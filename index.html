@@ -227,24 +227,15 @@ body.started .hero-title{opacity:1;transform:none}
   .orbit-dot.d2{--r:92px}
 }
 
-/* 黑屏页：浮动引导箭头 */
-.hero-hint{margin-top:2rem;display:flex;flex-direction:column;align-items:center;gap:.35rem;
-  opacity:.55;animation:hintFloat 2.6s ease-in-out infinite;pointer-events:none}
-.hero-hint svg{width:17px;height:17px;color:#f0cb8d}
-.hero-hint span{font-size:.66rem;letter-spacing:.3em;color:rgba(240,203,141,.65)}
-@keyframes hintFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
-
 /* 黑屏页：底部极淡小字 */
 .hero-bottom{position:absolute;bottom:1.4rem;left:0;right:0;text-align:center;
-  font-size:.62rem;letter-spacing:.34em;color:rgba(253,244,255,.18);pointer-events:none;z-index:1}
+  font-size:.62rem;letter-spacing:.34em;color:rgba(253,244,255,.16);pointer-events:none;z-index:1}
 
-/* 黑屏页：底部漂浮小符号 */
-.hero-bottom-floats{position:absolute;bottom:3.2rem;left:0;right:0;pointer-events:none;z-index:1}
-.hero-bottom-floats span{position:absolute;font-size:.85rem;opacity:.22;animation:floaty 8s ease-in-out infinite}
-.hero-bottom-floats span:nth-child(1){left:12%;color:#f6a9c9;animation-delay:0s}
-.hero-bottom-floats span:nth-child(2){left:32%;color:#f0cb8d;animation-delay:1.5s;font-size:.7rem}
-.hero-bottom-floats span:nth-child(3){right:32%;color:#c3aeec;animation-delay:3s;font-size:.75rem}
-.hero-bottom-floats span:nth-child(4){right:12%;color:#f6a9c9;animation-delay:4.5s}
+/* 黑屏页：下方空白区极简装饰线 */
+.hero-divider{position:absolute;bottom:14%;left:50%;transform:translateX(-50%);
+  display:flex;align-items:center;gap:.8rem;opacity:.35;pointer-events:none;z-index:1}
+.hero-divider .line{width:80px;height:1px;background:linear-gradient(90deg,transparent,rgba(240,203,141,.6),transparent)}
+.hero-divider .dot{width:5px;height:5px;border-radius:9999px;background:#f0cb8d;box-shadow:0 0 6px #f0cb8d;animation:breathe 3s ease-in-out infinite}
 
 /* 轨道粒子：沿星环移动的光点 */
 .orbit-dot{position:absolute;top:50%;left:50%;width:5px;height:5px;border-radius:9999px;
@@ -684,10 +675,6 @@ body.started #musicToggle{opacity:1;pointer-events:auto}
         <span class="sep">·</span>
         <span id="cdShort">距离生日 --</span>
       </div>
-      <div class="hero-hint" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
-        <span>点击星光</span>
-      </div>
     </div>
 
     <!-- 点击后的主标题 -->
@@ -706,10 +693,11 @@ body.started #musicToggle{opacity:1;pointer-events:auto}
         <span id="cdNum" class="num">--</span>
       </p>
     </div>
-    <!-- 黑屏页底部装饰 -->
-    <div class="hero-bottom-floats" aria-hidden="true">
-      <span>♪</span><span>✦</span><span>♥</span><span>♎</span>
+    <!-- 黑屏页下方空白区：极简装饰线 -->
+    <div class="hero-divider" aria-hidden="true">
+      <span class="line"></span><span class="dot"></span><span class="line"></span>
     </div>
+    <!-- 黑屏页底部小字 -->
     <div class="hero-bottom">2019 · 会玩初识 · 致千儿 · 2026</div>
   </section>
 
