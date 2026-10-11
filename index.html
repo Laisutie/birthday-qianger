@@ -388,6 +388,34 @@ body.started .cake-glow{opacity:.7}
 .mic-btn .dot{width:6px;height:6px;border-radius:9999px;background:currentColor;opacity:.5}
 .mic-btn.on .dot{opacity:1;animation:breathe 1.2s ease-in-out infinite}
 
+/* ===== 礼物盒 ===== */
+.gift-box{position:relative;width:108px;height:96px;cursor:pointer;transition:transform .35s var(--ease);margin:0 auto}
+.gift-box:hover{transform:translateY(-4px)}
+.gift-body{position:absolute;bottom:0;width:108px;height:70px;border-radius:7px;
+  background:linear-gradient(135deg,#f6a9c9 0%,#e88ab0 55%,#d9709c 100%);
+  box-shadow:0 8px 24px rgba(246,169,201,.45),inset 0 1px 0 rgba(255,255,255,.3)}
+.gift-lid{position:absolute;top:0;left:-6px;width:120px;height:26px;border-radius:6px;
+  background:linear-gradient(135deg,#f5d89a,#e8bd6e);
+  box-shadow:0 4px 14px rgba(240,203,141,.5),inset 0 1px 0 rgba(255,255,255,.4);
+  transition:transform .65s var(--ease),opacity .55s ease;z-index:2}
+.gift-box.opened .gift-lid{transform:translateY(-55px) rotate(-14deg);opacity:0}
+.gift-ribbon-v{position:absolute;left:50%;top:0;width:13px;height:100%;transform:translateX(-50%);
+  background:linear-gradient(180deg,#fffdf5,#f0e0b8);z-index:1}
+.gift-ribbon-h{position:absolute;top:50%;left:0;width:100%;height:13px;transform:translateY(-50%);
+  background:linear-gradient(90deg,#fffdf5,#f0e0b8);z-index:1}
+.gift-bow{position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:32px;height:22px;z-index:3}
+.gift-bow::before,.gift-bow::after{content:"";position:absolute;top:0;width:15px;height:20px;border-radius:50% 50% 50% 0;
+  background:linear-gradient(135deg,#f5d89a,#e0b060);box-shadow:0 2px 6px rgba(200,160,80,.4)}
+.gift-bow::before{left:1px;transform:rotate(-32deg)}
+.gift-bow::after{right:1px;transform:rotate(32deg)}
+.gift-box .gift-glow{position:absolute;inset:-16px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(246,169,201,.3),transparent 65%);opacity:0;transition:opacity .5s}
+.gift-box:hover .gift-glow{opacity:1}
+
+/* ===== 生日倒计时 ===== */
+.countdown{display:inline-flex;align-items:center;gap:.5rem;flex-wrap:wrap;justify-content:center}
+.countdown .num{color:var(--gold);font-weight:600;font-variant-numeric:tabular-nums}
+
 /* ===== 音乐开关 ===== */
 #musicToggle{position:fixed;top:1.1rem;right:1.1rem;z-index:70;width:46px;height:46px;border-radius:9999px;
   display:flex;align-items:center;justify-content:center;
@@ -527,6 +555,10 @@ body.started #musicToggle{opacity:1;pointer-events:auto}
         <span class="h-px w-16 bg-gradient-to-l from-transparent to-[#f6a9c9]/70" aria-hidden="true"></span>
       </div>
       <p class="mt-6 text-[15px] text-[#fdf4ff]/85 glow-soft">千儿，欢迎来到属于你的这一天</p>
+      <p class="countdown mt-4 text-[13px] text-[#fdf4ff]/65 tracking-[.18em]">
+        <span id="cdText">距离千儿生日还有</span>
+        <span id="cdNum" class="num">--</span>
+      </p>
     </div>
   </section>
 
@@ -633,7 +665,17 @@ body.started #musicToggle{opacity:1;pointer-events:auto}
           </div>
         </div>
         <p class="rv text-[13px] text-[#fdf4ff]/55 tracking-[.22em] mt-6">愿你往后的日子，每天都甜甜的</p>
-        <div class="rv mt-7 flex justify-center">
+        <div class="rv mt-8 flex flex-col items-center gap-6">
+          <div class="gift-box" id="giftBox" role="button" tabindex="0" aria-label="打开生日礼物">
+            <div class="gift-glow" aria-hidden="true"></div>
+            <div class="gift-body">
+              <div class="gift-ribbon-v" aria-hidden="true"></div>
+              <div class="gift-ribbon-h" aria-hidden="true"></div>
+            </div>
+            <div class="gift-lid"></div>
+            <div class="gift-bow" aria-hidden="true"></div>
+          </div>
+          <p class="candle-hint">点一点礼物盒，有惊喜</p>
           <button id="replayBtn" class="btn-ghost" type="button">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2c1.2 7 4.8 10.8 10 12-5.2 1.2-8.8 5-10 10-1.2-5-4.8-8.8-10-10 5.2-1.2 8.8-5 10-12Z"/></svg>
             再放一次烟花
@@ -744,6 +786,7 @@ addEventListener("resize", sizeAll);
    ============================================================ */
 let stars = [];
 let fireflies = [];
+let meteors = [];
 function makeStars(){
   stars = [];
   const n = Math.min(150, Math.floor(W*H/9000));
@@ -809,6 +852,21 @@ function stepStars(t){
     sctx.globalAlpha = 1;
     sctx.fillStyle = g;
     sctx.fillRect(mx-110, my-110, 220, 220);
+    // 鼠标附近星光粒子短暂连线
+    const near = [];
+    for (const s of stars){ const dx=s.x-mx,dy=s.y-my; if (dx*dx+dy*dy<14400) near.push(s); }
+    if (near.length > 1){
+      sctx.globalAlpha = 0.18;
+      sctx.strokeStyle = "rgba(240,203,141,0.55)";
+      sctx.lineWidth = 0.6;
+      for (let i=0;i<near.length;i++) for (let j=i+1;j<near.length;j++){
+        const dx=near[i].x-near[j].x, dy=near[i].y-near[j].y;
+        if (dx*dx+dy*dy < 6400){
+          sctx.beginPath(); sctx.moveTo(near[i].x,near[i].y); sctx.lineTo(near[j].x,near[j].y); sctx.stroke();
+        }
+      }
+      sctx.globalAlpha = 1;
+    }
   }
   // 萤火虫：暖金色慢漂
   for (const f of fireflies){
@@ -826,6 +884,24 @@ function stepStars(t){
     sctx.beginPath(); sctx.arc(f.x,f.y,f.r*4.5,0,Math.PI*2); sctx.fill();
   }
   sctx.globalAlpha = 1;
+  // 流星：偶尔划过
+  for (let i=meteors.length-1;i>=0;i--){
+    const m = meteors[i];
+    m.x += m.vx; m.y += m.vy; m.life -= m.decay;
+    if (m.life<=0 || m.x>W+120 || m.y>H+120){ meteors.splice(i,1); continue; }
+    const tx=m.x-m.vx*7, ty=m.y-m.vy*7;
+    const mg=sctx.createLinearGradient(m.x,m.y,tx,ty);
+    mg.addColorStop(0,"rgba(255,245,210,"+(m.life*0.9)+")");
+    mg.addColorStop(1,"rgba(255,245,210,0)");
+    sctx.strokeStyle=mg; sctx.lineWidth=1.6;
+    sctx.beginPath(); sctx.moveTo(m.x,m.y); sctx.lineTo(tx,ty); sctx.stroke();
+    sctx.fillStyle="#fff8e0";
+    sctx.beginPath(); sctx.arc(m.x,m.y,1.8,0,Math.PI*2); sctx.fill();
+  }
+  if (Math.random()<0.0025 && meteors.length<2){
+    meteors.push({x:Math.random()*W*0.7,y:Math.random()*H*0.25,
+      vx:7+Math.random()*4,vy:3.5+Math.random()*2,life:1,decay:0.012+Math.random()*0.008});
+  }
 }
 function starLoop(t){ stepStars(t); requestAnimationFrame(starLoop); }
 
@@ -1209,6 +1285,50 @@ document.addEventListener("click", e=>{
 /* 再放一次烟花 */
 const replayBtn = document.getElementById("replayBtn");
 if (replayBtn) replayBtn.addEventListener("click", e=>{ e.stopPropagation(); replayFireworks(); });
+
+/* ============================================================
+   生日实时倒计时（10月12日 00:00）
+   ============================================================ */
+function updateCountdown(){
+  const now = new Date();
+  const y = now.getFullYear();
+  const isBirthday = now.getMonth()===9 && now.getDate()===12;
+  const cdText = document.getElementById("cdText");
+  const cdNum = document.getElementById("cdNum");
+  if (!cdText || !cdNum) return;
+  if (isBirthday){
+    cdText.textContent = "今天是千儿的生日 · " + (y-2001) + "岁";
+    cdNum.textContent = "";
+    return;
+  }
+  let target = new Date(y, 9, 12, 0, 0, 0);
+  if (now > target) target = new Date(y+1, 9, 12, 0, 0, 0);
+  const diff = target - now;
+  const d = Math.floor(diff/86400000);
+  const h = Math.floor((diff%86400000)/3600000);
+  const m = Math.floor((diff%3600000)/60000);
+  cdText.textContent = "距离千儿生日还有";
+  cdNum.textContent = d > 0 ? d + "天" : h + "小时" + m + "分";
+}
+updateCountdown();
+setInterval(updateCountdown, 20000);
+
+/* ============================================================
+   礼物盒：点击打开，彩带 + 随机祝福
+   ============================================================ */
+const giftBox = document.getElementById("giftBox");
+if (giftBox){
+  const giftWishes = ["愿你被世界温柔以待","愿你每天都有小确幸","愿你所想皆有回应","愿你岁岁平安喜乐","愿你永远保有这份单纯","愿你早日等到长久温暖的陪伴"];
+  const openGift = ()=>{
+    if (giftBox.classList.contains("opened")) return;
+    giftBox.classList.add("opened");
+    const r = giftBox.getBoundingClientRect();
+    burstFx(r.left+r.width/2, r.top+r.height/2, 1);
+    showFloatTip(giftWishes[(Math.random()*giftWishes.length)|0]);
+  };
+  giftBox.addEventListener("click", openGift);
+  giftBox.addEventListener("keydown", e=>{ if(e.key==="Enter"||e.key===" "){e.preventDefault();openGift();} });
+}
 
 /* 底部彩蛋：点击触发小星光 + 提示 */
 if (easterEl) easterEl.addEventListener("click", e=>{
