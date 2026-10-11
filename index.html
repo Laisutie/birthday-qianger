@@ -279,6 +279,77 @@ body.started .hero-title{opacity:1;transform:none}
   color:var(--ink-dim);font-size:.82rem;letter-spacing:.16em;transition:all .3s var(--ease)}
 .btn-ghost:hover{border-color:rgba(246,169,201,.75);color:var(--ink);background:rgba(246,169,201,.09);transform:translateY(-1px)}
 
+/* ===== 天秤座星座图（背景装饰，缓慢旋转） ===== */
+.libra-const{position:fixed;top:calc(50% + var(--py,0px));left:50%;width:min(80vmin,680px);height:min(80vmin,680px);
+  transform:translate(-50%,-50%);z-index:0;opacity:.16;pointer-events:none;display:block;
+  animation:constSpin 120s linear infinite;will-change:transform}
+@keyframes constSpin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+.libra-const .star{fill:#fff;filter:drop-shadow(0 0 4px #f6a9c9)}
+.libra-const .star.tw{animation:twinkle 3.5s ease-in-out infinite}
+.libra-const .line{stroke:rgba(246,169,201,.5);stroke-width:.6;fill:none}
+
+/* ===== 时间轴点亮 ===== */
+.moments{position:relative}
+.moments::before{content:"";position:absolute;left:6px;top:10px;bottom:10px;width:1px;
+  background:linear-gradient(180deg,rgba(246,169,201,.45),rgba(240,203,141,.25),rgba(195,174,236,.15))}
+.moment{position:relative;transition:opacity .6s ease,transform .6s var(--ease)}
+.moment-dot{position:relative;z-index:1;transition:box-shadow .5s,transform .5s}
+.moment.lit .moment-dot{box-shadow:0 0 16px rgba(246,169,201,.85),0 0 32px rgba(240,203,141,.4);transform:scale(1.25)}
+.moment.lit .moment-line{text-shadow:0 0 14px rgba(246,169,201,.35)}
+
+/* ===== 卡片 hover 发光 ===== */
+.glass{transition:border-color .4s,box-shadow .4s,transform .4s var(--ease)}
+.glass:hover{border-color:rgba(246,169,201,.42);
+  box-shadow:0 16px 54px rgba(6,2,18,.4),0 0 30px rgba(246,169,201,.12),inset 0 1px 0 rgba(255,255,255,.1);
+  transform:translateY(-2px)}
+
+/* ===== 信纸展开：段落逐段浮现 ===== */
+.letter-card{overflow:hidden}
+.letter-card .lp{opacity:0;transform:translateY(14px);transition:opacity .8s ease,transform .8s var(--ease)}
+.letter-card.open .lp{opacity:1;transform:none}
+.letter-card.open .lp:nth-child(1){transition-delay:.1s}
+.letter-card.open .lp:nth-child(2){transition-delay:.25s}
+.letter-card.open .lp:nth-child(3){transition-delay:.4s}
+.letter-card.open .lp:nth-child(4){transition-delay:.55s}
+.letter-card.open .lp:nth-child(5){transition-delay:.7s}
+.letter-card.open .lp:nth-child(6){transition-delay:.85s}
+.letter-card.open .lp:nth-child(7){transition-delay:1s}
+.letter-card.open .lp:nth-child(8){transition-delay:1.15s}
+.letter-seal{display:inline-block;width:42px;height:42px;border-radius:9999px;
+  background:radial-gradient(circle at 35% 30%,#f6a9c9,#c47a9e);
+  box-shadow:0 0 18px rgba(246,169,201,.5);margin-bottom:.8rem;
+  animation:breathe 3s ease-in-out infinite}
+
+/* ===== 蛋糕装饰升级 ===== */
+.cake-drip{position:absolute;inset:46px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle at 50% 0%,transparent 42%,rgba(255,255,255,.0) 43%),
+    conic-gradient(from 0deg,transparent 0deg,rgba(255,255,255,.55) 8deg,transparent 16deg,
+    transparent 40deg,rgba(255,255,255,.5) 48deg,transparent 56deg,
+    transparent 90deg,rgba(255,255,255,.55) 98deg,transparent 106deg,
+    transparent 140deg,rgba(255,255,255,.5) 148deg,transparent 156deg,
+    transparent 200deg,rgba(255,255,255,.55) 208deg,transparent 216deg,
+    transparent 260deg,rgba(255,255,255,.5) 268deg,transparent 276deg,
+    transparent 310deg,rgba(255,255,255,.55) 318deg,transparent 326deg);
+  -webkit-mask:radial-gradient(circle,transparent 58%,#000 59%);mask:radial-gradient(circle,transparent 58%,#000 59%)}
+.cherry{position:absolute;width:12px;height:12px;border-radius:9999px;
+  background:radial-gradient(circle at 35% 30%,#ff9eb5,#d6456b);
+  box-shadow:0 1px 3px rgba(120,30,50,.5)}
+.cherry::after{content:"";position:absolute;left:50%;top:-7px;width:1px;height:8px;background:#7a4a2a}
+.choco{position:absolute;width:16px;height:8px;border-radius:40% 40% 50% 50%;
+  background:linear-gradient(180deg,#8b5a3c,#5c3a24);box-shadow:inset 0 1px 2px rgba(255,255,255,.25)}
+
+/* ===== 彩蛋 hover ===== */
+.easter{transition:opacity 1.6s ease,color .5s,letter-spacing .5s;cursor:default}
+.easter.see{opacity:1}
+.easter:hover{color:rgba(253,244,255,.55);letter-spacing:.32em;text-shadow:0 0 12px rgba(246,169,201,.4)}
+
+/* ===== 密码解锁：星光汇聚 ===== */
+.gather-star{position:fixed;width:4px;height:4px;border-radius:9999px;background:#fff;
+  box-shadow:0 0 8px #f6a9c9;pointer-events:none;z-index:99;opacity:0}
+
+/* ===== 视差层 ===== */
+.parallax-slow{will-change:transform}
+
 /* ===== 音乐开关 ===== */
 #musicToggle{position:fixed;top:1.1rem;right:1.1rem;z-index:70;width:46px;height:46px;border-radius:9999px;
   display:flex;align-items:center;justify-content:center;
@@ -337,6 +408,21 @@ body.started #musicToggle{opacity:1;pointer-events:auto}
 
 <!-- ===== 背景层 ===== -->
 <div id="bg" aria-hidden="true"><div id="bgGold"></div></div>
+
+<!-- 天秤座星座连线图（背景装饰） -->
+<svg class="libra-const" viewBox="0 0 200 200" aria-hidden="true">
+  <line class="line" x1="60" y1="70" x2="100" y2="100"/>
+  <line class="line" x1="140" y1="70" x2="100" y2="100"/>
+  <line class="line" x1="70" y1="150" x2="100" y2="100"/>
+  <line class="line" x1="130" y1="150" x2="100" y2="100"/>
+  <line class="line" x1="60" y1="70" x2="140" y2="70"/>
+  <circle class="star tw" cx="60" cy="70" r="2.8"/>
+  <circle class="star tw" cx="140" cy="70" r="2.8" style="animation-delay:.8s"/>
+  <circle class="star" cx="100" cy="100" r="3.4"/>
+  <circle class="star tw" cx="70" cy="150" r="2.4" style="animation-delay:1.6s"/>
+  <circle class="star tw" cx="130" cy="150" r="2.4" style="animation-delay:2.4s"/>
+</svg>
+
 <canvas id="starCanvas" aria-hidden="true"></canvas>
 <canvas id="fxCanvas" aria-hidden="true"></canvas>
 <div id="flash" aria-hidden="true"></div>
@@ -446,14 +532,15 @@ body.started #musicToggle{opacity:1;pointer-events:auto}
       <div class="container-x">
         <p class="sec-badge rv"><span class="h-px w-8 bg-[#f0cb8d]/60" aria-hidden="true"></span>写给你的一封信</p>
         <div class="glass letter-card rv mt-5">
-          <p class="font-bold text-[1.12rem] glow-soft">千儿：</p>
-          <p>还记得 2019 年在会玩刚认识的时候，你才刚踏入大学。</p>
-          <p>你总能认识很多新朋友，但真正能走进心底的很少。你很需要有人陪着，偶尔会没有安全感。</p>
-          <p>从最开始接触网络到现在，你一直保有一份难得的单纯。</p>
-          <p>你真的特别优秀，能流畅自如地在两种语言间切换，还懂音乐、会弹钢琴，高尔夫，藏着好多闪闪发光的技能。</p>
-          <p>我知道你最近迷茫，或许是心里盼着一份可以长久、真诚的陪伴，也或许是找寻属于自己的价值。</p>
-          <p>10 月 12 日，你的生日啦。愿你保持天秤那份温柔通透，早日等到长久温暖的陪伴，看见自己本身就很耀眼。愿所想皆有回应，岁岁安稳。生日快乐。</p>
-          <p class="letter-sig">—— 无常</p>
+          <div class="letter-seal" aria-hidden="true"></div>
+          <p class="lp font-bold text-[1.12rem] glow-soft">千儿：</p>
+          <p class="lp">还记得 2019 年在会玩刚认识的时候，你才刚踏入大学。</p>
+          <p class="lp">你总能认识很多新朋友，但真正能走进心底的很少。你很需要有人陪着，偶尔会没有安全感。</p>
+          <p class="lp">从最开始接触网络到现在，你一直保有一份难得的单纯。</p>
+          <p class="lp">你真的特别优秀，能流畅自如地在两种语言间切换，还懂音乐、会弹钢琴，高尔夫，藏着好多闪闪发光的技能。</p>
+          <p class="lp">我知道你最近迷茫，或许是心里盼着一份可以长久、真诚的陪伴，也或许是找寻属于自己的价值。</p>
+          <p class="lp">10 月 12 日，你的生日啦。愿你保持天秤那份温柔通透，早日等到长久温暖的陪伴，看见自己本身就很耀眼。愿所想皆有回应，岁岁安稳。生日快乐。</p>
+          <p class="lp letter-sig">—— 无常</p>
         </div>
       </div>
     </div>
@@ -484,6 +571,12 @@ body.started #musicToggle{opacity:1;pointer-events:auto}
               <div class="cake-plate"></div>
               <div class="cake-body"></div>
               <div class="cake-top"></div>
+              <div class="cake-drip" aria-hidden="true"></div>
+              <span class="cherry" style="left:68px;top:58px" aria-hidden="true"></span>
+              <span class="cherry" style="left:132px;top:64px" aria-hidden="true"></span>
+              <span class="cherry" style="left:100px;top:50px" aria-hidden="true"></span>
+              <span class="choco" style="left:78px;top:132px" aria-hidden="true"></span>
+              <span class="choco" style="left:122px;top:128px" aria-hidden="true"></span>
               <span class="cake-msg">10·12</span>
               <span class="candle c1" role="button" tabindex="0" aria-label="吹灭蜡烛"></span>
               <span class="candle c2" role="button" tabindex="0" aria-label="吹灭蜡烛"></span>
@@ -556,6 +649,7 @@ function unlock(){
   const ls = document.getElementById("lockScreen");
   ls.classList.add("gone");
   setTimeout(()=>{ ls.style.display = "none"; }, 950);
+  setTimeout(gatherStars, 350);   // 锁屏淡出后，星光向中心汇聚
 }
 function lockFail(){
   lockErr.textContent = "密码好像不对哦，再想想～";
@@ -701,8 +795,17 @@ function stepFx(){
   fctx.clearRect(0,0,W,H);
   for (let i=parts.length-1;i>=0;i--){
     const p = parts[i];
-    p.vy += p.g; p.vx *= p.drag; p.vy *= p.drag;
-    p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.life -= p.decay;
+    if (p.gather){
+      // 汇聚粒子：向目标点飞去
+      const dx=p.targetX-p.x, dy=p.targetY-p.y, d=Math.max(1,Math.sqrt(dx*dx+dy*dy));
+      p.vx += dx/d*0.55; p.vy += dy/d*0.55;
+      p.vx*=0.9; p.vy*=0.9;
+      p.x+=p.vx; p.y+=p.vy; p.life-=p.decay;
+      if (d<18) p.life=0;
+    } else {
+      p.vy += p.g; p.vx *= p.drag; p.vy *= p.drag;
+      p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.life -= p.decay;
+    }
     if (p.life<=0 || p.y>H+30){ parts.splice(i,1); continue; }
     fctx.globalAlpha = Math.max(0, p.life);
     if (p.kind === "confetti"){
@@ -737,6 +840,23 @@ function celebrate(){
   for (let i=0;i<90;i++) setTimeout(confettiDrop, Math.random()*2200);
   // 之后每隔一段温柔的小烟花，维持氛围（很轻，不抢阅读）
   setInterval(()=>{ if(!document.hidden) burstFx(W*(0.2+Math.random()*0.6), H*(0.18+Math.random()*0.45), 1); }, 13000);
+}
+
+/* 密码解锁：星光从四周向中心汇聚 */
+function gatherStars(){
+  if (REDUCED) return;
+  const cx = W/2, cy = H/2;
+  for (let i=0;i<40;i++){
+    parts.push({
+      x: Math.random()*W, y: Math.random()*H,
+      vx:0, vy:0, life:1, decay:0.014,
+      size: 1+Math.random()*1.6,
+      color: PALETTE[(Math.random()*PALETTE.length)|0],
+      kind:"spark", rot:0, vr:0, g:0, drag:1,
+      targetX: cx+(Math.random()-0.5)*60, targetY: cy+(Math.random()-0.5)*60,
+      gather:true
+    });
+  }
 }
 
 /* 小规模星光爆发（点击页面 / 吹灭蜡烛时用，柔和不刺眼） */
@@ -790,6 +910,8 @@ function onScroll(){
     bg.style.setProperty("--bgMid",  mix(P_MID, P_MID2, k).join(","));
     bg.style.setProperty("--bgBot",  mix(P_BOT, P_BOT2, k).join(","));
     bgGold.style.transform = "translate3d(" + (p*60) + "px," + (p*110) + "px,0)";
+    const libra = document.querySelector(".libra-const");
+    if (libra) libra.style.setProperty("--py", (p*90-45)+"px");
     ticking = false;
   });
 }
@@ -806,6 +928,19 @@ const eo = new IntersectionObserver(es=>{
 }, {threshold:.55});
 const easterEl = document.querySelector(".easter");
 if (easterEl) eo.observe(easterEl);
+
+/* 时间轴节点：滚入视口逐个点亮 */
+const momentIO = new IntersectionObserver(es=>{
+  es.forEach(e=>{ if (e.isIntersecting){ e.target.classList.add("lit"); momentIO.unobserve(e.target); } });
+}, {threshold:.4});
+document.querySelectorAll(".moment").forEach(el=>momentIO.observe(el));
+
+/* 信件：滚入视口时展开，段落逐段浮现 */
+const letterIO = new IntersectionObserver(es=>{
+  es.forEach(e=>{ if (e.isIntersecting){ e.target.classList.add("open"); letterIO.unobserve(e.target); } });
+}, {threshold:.25});
+const letterCard = document.querySelector(".letter-card");
+if (letterCard) letterIO.observe(letterCard);
 
 /* ============================================================
    音乐：优先 MP3（见顶部 MUSIC_SRC），缺失自动回退内置合成
@@ -999,6 +1134,13 @@ document.addEventListener("click", e=>{
 /* 再放一次烟花 */
 const replayBtn = document.getElementById("replayBtn");
 if (replayBtn) replayBtn.addEventListener("click", e=>{ e.stopPropagation(); replayFireworks(); });
+
+/* 底部彩蛋：点击触发小星光 + 提示 */
+if (easterEl) easterEl.addEventListener("click", e=>{
+  e.stopPropagation();
+  miniBurst(e.clientX, e.clientY);
+  showFloatTip("回忆本身就足够珍贵");
+});
 
 /* ============================================================
    启动
