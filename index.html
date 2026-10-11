@@ -280,6 +280,25 @@ body.started .hero-title{opacity:1;transform:none}
 .libra-tag{display:inline-block;margin-top:2rem;padding:.35rem 1.3rem;border:1px solid rgba(240,203,141,.3);
   border-radius:9999px;font-size:.7rem;color:rgba(240,203,141,.65);letter-spacing:.38em}
 
+/* ===== 天秤座 × 蛇年 混搭卡片 ===== */
+.zodiac-card{display:flex;align-items:center;justify-content:center;gap:1.8rem;
+  margin:2.8rem auto 0;max-width:540px;padding:1.8rem 1.5rem;
+  background:rgba(255,255,255,.035);border:1px solid rgba(240,203,141,.16);
+  border-radius:18px;backdrop-filter:blur(10px);position:relative;overflow:hidden}
+.zodiac-card::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(circle at 22% 28%,rgba(246,169,201,.09),transparent 50%),
+             radial-gradient(circle at 78% 72%,rgba(195,174,236,.09),transparent 50%)}
+.zodiac-side{flex:1;text-align:center;position:relative;z-index:1}
+.zodiac-side svg{width:76px;height:76px;margin:0 auto .7rem;filter:drop-shadow(0 0 7px rgba(240,203,141,.35))}
+.zodiac-side .z-name{font-family:var(--font-serif);font-size:1.05rem;color:#f0cb8d;letter-spacing:.18em}
+.zodiac-side .z-desc{font-size:.7rem;color:rgba(253,244,255,.48);margin-top:.3rem;letter-spacing:.22em}
+.zodiac-divider{width:1px;height:72px;flex-shrink:0;
+  background:linear-gradient(180deg,transparent,rgba(240,203,141,.4),transparent)}
+@media (max-width:520px){
+  .zodiac-card{gap:1rem;padding:1.4rem 1rem}
+  .zodiac-side svg{width:58px;height:58px}
+}
+
 /* ===== 内容区块 ===== */
 .section{padding:4.6rem 1.25rem}
 .container-x{max-width:720px;margin:0 auto}
@@ -697,6 +716,36 @@ body.started #musicToggle{opacity:1;pointer-events:auto}
           <div class="moment rv" style="transition-delay:.4s">
             <span class="moment-dot" aria-hidden="true"></span>
             <div class="moment-line">我们已经认识 <span id="meetDays" class="gold font-bold">—</span> 天啦<span class="moment-note block">从 2019 年会玩初遇到现在</span></div>
+          </div>
+        </div>
+        <!-- 天秤座 × 蛇年 混搭装饰 -->
+        <div class="zodiac-card rv">
+          <div class="zodiac-side">
+            <svg viewBox="0 0 100 100" fill="none" aria-hidden="true">
+              <circle cx="28" cy="22" r="3.2" fill="#f0cb8d"/>
+              <circle cx="72" cy="22" r="3.2" fill="#f0cb8d"/>
+              <circle cx="18" cy="58" r="2.6" fill="#f6a9c9"/>
+              <circle cx="82" cy="58" r="2.6" fill="#f6a9c9"/>
+              <circle cx="50" cy="80" r="2.2" fill="#c3aeec"/>
+              <line x1="28" y1="22" x2="72" y2="22" stroke="rgba(240,203,141,.5)" stroke-width="1"/>
+              <line x1="28" y1="22" x2="18" y2="58" stroke="rgba(240,203,141,.4)" stroke-width="1"/>
+              <line x1="72" y1="22" x2="82" y2="58" stroke="rgba(240,203,141,.4)" stroke-width="1"/>
+              <line x1="18" y1="58" x2="50" y2="80" stroke="rgba(246,169,201,.35)" stroke-width="1"/>
+              <line x1="82" y1="58" x2="50" y2="80" stroke="rgba(246,169,201,.35)" stroke-width="1"/>
+            </svg>
+            <p class="z-name">Libra</p>
+            <p class="z-desc">天秤座 · 风象</p>
+          </div>
+          <div class="zodiac-divider" aria-hidden="true"></div>
+          <div class="zodiac-side">
+            <svg viewBox="0 0 100 100" fill="none" aria-hidden="true">
+              <path d="M18 72 Q28 48 50 54 Q72 60 78 38 Q82 22 66 18" stroke="#c3aeec" stroke-width="3" stroke-linecap="round" fill="none"/>
+              <circle cx="66" cy="18" r="4.5" fill="#c3aeec"/>
+              <circle cx="64" cy="16.5" r="1.2" fill="#1a0f2e"/>
+              <path d="M62 14 L57 10 M70 14 L75 10" stroke="#f6a9c9" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <p class="z-name">辛巳</p>
+            <p class="z-desc">2001 · 蛇年</p>
           </div>
         </div>
       </div>
