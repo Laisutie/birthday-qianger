@@ -201,6 +201,29 @@ body.started .hero-title{opacity:1;transform:none}
 .sparkle{position:absolute;pointer-events:none;animation:twinkle 4s ease-in-out infinite;opacity:.8}
 @keyframes twinkle{0%,100%{opacity:.25;transform:scale(.72) rotate(0)}50%{opacity:.95;transform:scale(1.08) rotate(18deg)}}
 
+/* ===== 黑屏页装饰：光晕 / 星环 / 漂浮元素 ===== */
+.hero-pre{position:relative}
+.hero-halo{position:absolute;top:50%;left:50%;width:440px;height:440px;transform:translate(-50%,-50%);
+  border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(246,169,201,.14),rgba(240,203,141,.07) 42%,transparent 70%);
+  animation:haloPulse 6.5s ease-in-out infinite}
+@keyframes haloPulse{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.65}50%{transform:translate(-50%,-50%) scale(1.14);opacity:1}}
+.hero-rings{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;width:0;height:0}
+.hero-ring{position:absolute;top:50%;left:50%;border-radius:50%;border-style:dashed;border-width:1px}
+.hero-ring.r1{width:272px;height:272px;margin:-136px 0 0 -136px;border-color:rgba(240,203,141,.32);animation:ringSpin 34s linear infinite}
+.hero-ring.r2{width:228px;height:228px;margin:-114px 0 0 -114px;border-color:rgba(246,169,201,.38);animation:ringSpin 24s linear infinite reverse}
+@keyframes ringSpin{to{transform:rotate(360deg)}}
+.hero-greet{font-family:var(--font-serif);font-size:.88rem;color:rgba(240,203,141,.72);letter-spacing:.38em;margin-bottom:1.1rem}
+.hero-float{position:absolute;pointer-events:none;animation:floaty 7.5s ease-in-out infinite}
+.hero-float.libra{font-size:1.35rem;color:#c3aeec;opacity:.5}
+.hero-float.date{font-size:.72rem;color:#f0cb8d;letter-spacing:.22em;font-family:var(--font-serif);opacity:.55}
+.hero-float.heart{font-size:.95rem;color:#f6a9c9;opacity:.5}
+@media (max-width:520px){
+  .hero-halo{width:320px;height:320px}
+  .hero-ring.r1{width:220px;height:220px;margin:-110px 0 0 -110px}
+  .hero-ring.r2{width:184px;height:184px;margin:-92px 0 0 -92px}
+}
+
 /* ===== 内容区块 ===== */
 .section{padding:4.6rem 1.25rem}
 .container-x{max-width:720px;margin:0 auto}
@@ -529,12 +552,25 @@ body.started #musicToggle{opacity:1;pointer-events:auto}
   <section id="hero">
     <!-- 点击前的黑屏状态 -->
     <div class="hero-pre flex flex-col items-center">
+      <div class="hero-halo" aria-hidden="true"></div>
+      <div class="hero-rings" aria-hidden="true">
+        <div class="hero-ring r1"></div>
+        <div class="hero-ring r2"></div>
+      </div>
       <!-- 漂浮星光装饰 -->
-      <svg class="sparkle" style="top:16%;left:16%;width:22px;animation-delay:.6s" viewBox="0 0 24 24" fill="#f6a9c9" aria-hidden="true"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12C7 11 11 7 12 0Z"/></svg>
-      <svg class="sparkle" style="top:24%;right:18%;width:14px;animation-delay:1.8s" viewBox="0 0 24 24" fill="#f0cb8d" aria-hidden="true"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12C7 11 11 7 12 0Z"/></svg>
-      <svg class="sparkle" style="bottom:20%;left:22%;width:16px;animation-delay:2.6s" viewBox="0 0 24 24" fill="#c3aeec" aria-hidden="true"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12C7 11 11 7 12 0Z"/></svg>
-      <svg class="sparkle" style="bottom:26%;right:24%;width:12px;animation-delay:1.1s" viewBox="0 0 24 24" fill="#f6a9c9" aria-hidden="true"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12C7 11 11 7 12 0Z"/></svg>
+      <svg class="sparkle" style="top:12%;left:14%;width:22px;animation-delay:.6s" viewBox="0 0 24 24" fill="#f6a9c9" aria-hidden="true"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12C7 11 11 7 12 0Z"/></svg>
+      <svg class="sparkle" style="top:20%;right:16%;width:14px;animation-delay:1.8s" viewBox="0 0 24 24" fill="#f0cb8d" aria-hidden="true"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12C7 11 11 7 12 0Z"/></svg>
+      <svg class="sparkle" style="top:38%;left:8%;width:12px;animation-delay:2.6s" viewBox="0 0 24 24" fill="#c3aeec" aria-hidden="true"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12C7 11 11 7 12 0Z"/></svg>
+      <svg class="sparkle" style="top:42%;right:10%;width:16px;animation-delay:1.1s" viewBox="0 0 24 24" fill="#f6a9c9" aria-hidden="true"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12C7 11 11 7 12 0Z"/></svg>
+      <svg class="sparkle" style="bottom:22%;left:20%;width:18px;animation-delay:3.2s" viewBox="0 0 24 24" fill="#f0cb8d" aria-hidden="true"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12C7 11 11 7 12 0Z"/></svg>
+      <svg class="sparkle" style="bottom:28%;right:22%;width:13px;animation-delay:.9s" viewBox="0 0 24 24" fill="#c3aeec" aria-hidden="true"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12C7 11 11 7 12 0Z"/></svg>
+      <!-- 漂浮装饰：天秤符号 / 日期 / 爱心 -->
+      <span class="hero-float libra" style="top:15%;left:18%;animation-delay:0s" aria-hidden="true">♎</span>
+      <span class="hero-float date" style="top:19%;right:17%;animation-delay:1.5s" aria-hidden="true">10·12</span>
+      <span class="hero-float heart" style="bottom:24%;left:15%;animation-delay:2.5s" aria-hidden="true">♥</span>
+      <span class="hero-float libra" style="bottom:20%;right:19%;animation-delay:3.8s;opacity:.3" aria-hidden="true">♎</span>
 
+      <p class="hero-greet">致 千儿小姐</p>
       <p class="script text-[26px] text-[#f6c58f] glow-soft leading-none mb-7">Happy Birthday</p>
       <button id="wishBtn" class="btn-wish" type="button" aria-label="点亮星光，解锁生日祝福">
         <svg width="34" height="34" viewBox="0 0 24 24" fill="#fdf4ff" aria-hidden="true"><path d="M12 2c1.2 8 4.8 11.8 10 12-5.2 1.2-8.8 5-10 10-1.2-5-4.8-8.8-10-10 5.2-.2 8.8-4 10-12Z"/></svg>
