@@ -222,7 +222,6 @@ body.started .hero-title{opacity:1;transform:none}
   .hero-halo{width:320px;height:320px}
   .hero-ring.r1{width:220px;height:220px;margin:-110px 0 0 -110px}
   .hero-ring.r2{width:184px;height:184px;margin:-92px 0 0 -92px}
-  .hero-watermark::before{font-size:170px}
   .orbit-dot.d1,.orbit-dot.d3{--r:110px}
   .orbit-dot.d2{--r:92px}
 }
@@ -230,6 +229,14 @@ body.started .hero-title{opacity:1;transform:none}
 /* 黑屏页：底部极淡小字 */
 .hero-bottom{position:absolute;bottom:1.4rem;left:0;right:0;text-align:center;
   font-size:.62rem;letter-spacing:.34em;color:rgba(253,244,255,.16);pointer-events:none;z-index:1}
+
+/* 黑屏页：底部漂浮小符号 */
+.hero-bottom-floats{position:absolute;bottom:3rem;left:0;right:0;pointer-events:none;z-index:1}
+.hero-bottom-floats span{position:absolute;font-size:.85rem;opacity:.2;animation:floaty 8s ease-in-out infinite}
+.hero-bottom-floats span:nth-child(1){left:12%;color:#f6a9c9;animation-delay:0s}
+.hero-bottom-floats span:nth-child(2){left:32%;color:#f0cb8d;animation-delay:1.5s;font-size:.7rem}
+.hero-bottom-floats span:nth-child(3){right:32%;color:#c3aeec;animation-delay:3s;font-size:.75rem}
+.hero-bottom-floats span:nth-child(4){right:12%;color:#f6a9c9;animation-delay:4.5s}
 
 /* 黑屏页：下方空白区极简装饰线 */
 .hero-divider{position:absolute;bottom:14%;left:50%;transform:translateX(-50%);
@@ -261,14 +268,6 @@ body.started .hero-title{opacity:1;transform:none}
   display:flex;gap:.55rem;align-items:center;flex-wrap:wrap;justify-content:center}
 .hero-stats b{color:#f0cb8d;font-weight:600;font-variant-numeric:tabular-nums}
 .hero-stats .sep{opacity:.4}
-
-/* 背景大水印 */
-.hero-watermark{position:absolute;top:0;left:0;width:100%;height:100%;
-  display:flex;align-items:center;justify-content:center;overflow:hidden;
-  pointer-events:none;user-select:none;z-index:0}
-.hero-watermark::before{content:"♎";font-size:280px;color:rgba(195,174,236,.055);
-  font-family:serif;line-height:1;animation:wmSpin 80s linear infinite}
-@keyframes wmSpin{to{transform:rotate(360deg)}}
 
 /* ===== 回到顶部按钮 ===== */
 .back-top{position:fixed;bottom:22px;right:22px;width:42px;height:42px;border-radius:9999px;
@@ -637,7 +636,6 @@ body.started #musicToggle{opacity:1;pointer-events:auto}
   <section id="hero">
     <!-- 点击前的黑屏状态 -->
     <div class="hero-pre flex flex-col items-center">
-      <div class="hero-watermark" aria-hidden="true">♎</div>
       <div class="hero-halo" aria-hidden="true"></div>
       <div class="hero-rings" aria-hidden="true">
         <div class="hero-ring r1"></div>
@@ -696,6 +694,10 @@ body.started #musicToggle{opacity:1;pointer-events:auto}
     <!-- 黑屏页下方空白区：极简装饰线 -->
     <div class="hero-divider" aria-hidden="true">
       <span class="line"></span><span class="dot"></span><span class="line"></span>
+    </div>
+    <!-- 黑屏页底部漂浮符号 -->
+    <div class="hero-bottom-floats" aria-hidden="true">
+      <span>♪</span><span>✦</span><span>♥</span><span>♎</span>
     </div>
     <!-- 黑屏页底部小字 -->
     <div class="hero-bottom">2019 · 会玩初识 · 致千儿 · 2026</div>
